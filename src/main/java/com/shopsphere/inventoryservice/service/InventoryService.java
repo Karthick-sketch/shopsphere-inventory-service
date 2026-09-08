@@ -1,0 +1,49 @@
+package com.shopsphere.inventoryservice.service;
+
+import com.shopsphere.inventoryservice.entity.Inventory;
+import com.shopsphere.inventoryservice.repository.InventoryRepository;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class InventoryService {
+
+  private final InventoryRepository inventoryRepository;
+
+  public List<Inventory> findAll() {
+    return inventoryRepository.findAll();
+  }
+
+  public Inventory findById(Long id) {
+    return inventoryRepository
+      .findById(id)
+      .orElseThrow(() ->
+        new RuntimeException("Inventory record not found with id: " + id)
+      );
+  }
+
+  public Inventory findByProductId(Long productId) {
+    return inventoryRepository
+      .findByProductId(productId)
+      .orElseThrow(() ->
+        new RuntimeException("Inventory not found for product id: " + productId)
+      );
+  }
+
+  public Inventory create(Inventory inventory) {
+    return inventoryRepository.save(inventory);
+  }
+
+  public Inventory update(Long id, Inventory updated) {
+    Inventory existing = findById(id);
+    existing.setQuantity(updated.getQuantity());
+    return inventoryRepository.save(existing);
+  }
+
+  public void delete(Long id) {
+    findById(id);
+    inventoryRepository.deleteById(id);
+  }
+}
