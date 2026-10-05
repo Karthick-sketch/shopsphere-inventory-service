@@ -1,5 +1,7 @@
 package com.shopsphere.inventoryservice.service;
 
+import com.shopsphere.inventoryservice.dto.order.OrderItemData;
+import com.shopsphere.inventoryservice.dto.order.OrderPlacedData;
 import com.shopsphere.inventoryservice.entity.Inventory;
 import com.shopsphere.inventoryservice.repository.InventoryRepository;
 import java.util.List;
@@ -38,12 +40,26 @@ public class InventoryService {
 
   public Inventory update(Long id, Inventory updated) {
     Inventory existing = findById(id);
-    existing.setQuantity(updated.getQuantity());
+    existing.setStock(updated.getStock());
+    existing.setIsAvailable(updated.getIsAvailable());
     return inventoryRepository.save(existing);
   }
 
   public void delete(Long id) {
     findById(id);
     inventoryRepository.deleteById(id);
+  }
+
+  public void reduceStock(OrderPlacedData data) {
+    for (OrderItemData item : data.getOrderItems()) {
+      Inventory inventory = findByProductId(item.getProductId());
+      if (inventory.getStock() < item.getQuantity()) {
+        throw new RuntimeException(
+          "Inventory not sufficient for product id: " + item.getProductId()
+        );
+      }
+      inventory.setStock(inventory.getStock() - item.getQuantity());
+      inventoryRepository.save(inventory);
+    }
   }
 }

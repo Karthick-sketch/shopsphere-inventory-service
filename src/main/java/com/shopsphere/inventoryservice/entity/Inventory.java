@@ -22,5 +22,9 @@ public class Inventory {
   private Long productId;
 
   @Column(nullable = false)
-  private Integer quantity;
+  private Integer stock;
+
+  @Column(nullable = false)
+  @Builder.Default
+  private Boolean isAvailable = true;
 }
