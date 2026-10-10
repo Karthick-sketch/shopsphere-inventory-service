@@ -1,7 +1,7 @@
 package com.shopsphere.inventoryservice.service;
 
-import com.shopsphere.inventoryservice.dto.order.OrderItemData;
-import com.shopsphere.inventoryservice.dto.order.OrderPlacedData;
+import com.shopsphere.inventoryservice.dto.*;
+import com.shopsphere.inventoryservice.dto.order.*;
 import com.shopsphere.inventoryservice.entity.Inventory;
 import com.shopsphere.inventoryservice.repository.InventoryRepository;
 import java.util.List;
@@ -34,6 +34,14 @@ public class InventoryService {
       );
   }
 
+  public AvailabilityResponse getAvailability(AvailabilityRequest request) {
+    Boolean available = inventoryRepository.checkAvailability(
+      request.getProductId(),
+      request.getQuantity()
+    );
+    return toAvailabilityResponse(request.getProductId(), available);
+  }
+
   public Inventory create(Inventory inventory) {
     return inventoryRepository.save(inventory);
   }
@@ -61,5 +69,12 @@ public class InventoryService {
       inventory.setStock(inventory.getStock() - item.getQuantity());
       inventoryRepository.save(inventory);
     }
+  }
+
+  private AvailabilityResponse toAvailabilityResponse(
+    Long productId,
+    Boolean available
+  ) {
+    return new AvailabilityResponse(productId, available);
   }
 }

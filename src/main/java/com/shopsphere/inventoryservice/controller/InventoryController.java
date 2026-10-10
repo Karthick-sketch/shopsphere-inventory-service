@@ -1,5 +1,6 @@
 package com.shopsphere.inventoryservice.controller;
 
+import com.shopsphere.inventoryservice.dto.*;
 import com.shopsphere.inventoryservice.entity.Inventory;
 import com.shopsphere.inventoryservice.service.InventoryService;
 import java.util.List;
@@ -30,6 +31,13 @@ public class InventoryController {
     @PathVariable Long productId
   ) {
     return ResponseEntity.ok(inventoryService.findByProductId(productId));
+  }
+
+  @PostMapping("/availability")
+  public ResponseEntity<AvailabilityResponse> getAvailability(
+    @RequestBody AvailabilityRequest request
+  ) {
+    return ResponseEntity.ok(inventoryService.getAvailability(request));
   }
 
   @PostMapping
