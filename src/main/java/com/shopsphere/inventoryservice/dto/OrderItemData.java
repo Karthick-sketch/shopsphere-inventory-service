@@ -1,4 +1,4 @@
-package com.shopsphere.inventoryservice.dto.order;
+package com.shopsphere.inventoryservice.dto;
 
 import lombok.Data;
 

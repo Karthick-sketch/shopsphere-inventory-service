@@ -56,8 +56,14 @@ public class InventoryController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
+  public ResponseEntity<?> delete(@PathVariable Long id) {
     inventoryService.delete(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/reserve")
+  public ResponseEntity<?> reserve(@RequestBody OrderReserveRequest request) {
+    inventoryService.reserveStock(request);
     return ResponseEntity.noContent().build();
   }
 }

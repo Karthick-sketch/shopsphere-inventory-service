@@ -1,5 +1,7 @@
-package com.shopsphere.inventoryservice.kafka;
+package com.shopsphere.inventoryservice.kafka.consumer;
 
+import com.shopsphere.inventoryservice.kafka.KafkaConstants;
+import com.shopsphere.inventoryservice.kafka.events.OrderPlacedEvent;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

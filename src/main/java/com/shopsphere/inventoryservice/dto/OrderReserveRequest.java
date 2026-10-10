@@ -1,12 +1,11 @@
-package com.shopsphere.inventoryservice.dto.order;
+package com.shopsphere.inventoryservice.dto;
 
 import java.util.List;
 import lombok.Data;
 
 @Data
-public class OrderPlacedData {
+public class OrderReserveRequest {
 
-  private Long userId;
   private Long orderId;
   private List<OrderItemData> orderItems;
 }
