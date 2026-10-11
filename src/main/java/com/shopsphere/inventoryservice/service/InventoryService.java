@@ -5,6 +5,7 @@ import com.shopsphere.inventoryservice.dto.order.*;
 import com.shopsphere.inventoryservice.entity.Inventory;
 import com.shopsphere.inventoryservice.entity.InventoryReservation;
 import com.shopsphere.inventoryservice.enums.ReservationStatus;
+import com.shopsphere.inventoryservice.exceptions.InsufficientStockException;
 import com.shopsphere.inventoryservice.repository.InventoryRepository;
 import com.shopsphere.inventoryservice.repository.InventoryReservationRepository;
 import jakarta.transaction.Transactional;
@@ -70,14 +71,13 @@ public class InventoryService {
     for (OrderItemData item : request.getOrderItems()) {
       Inventory inventory = findByProductId(item.getProductId());
       if (inventory.getStock() < item.getQuantity()) {
-        throw new RuntimeException(
+        throw new InsufficientStockException(
           "Inventory not sufficient for product id: " + item.getProductId()
         );
       }
 
       inventory.setStock(inventory.getStock() - item.getQuantity());
       inventoryRepository.save(inventory);
-
       reservations.add(toInventoryReservation(request.getOrderId(), item));
     }
     reservationRepository.saveAll(reservations);
@@ -94,6 +94,7 @@ public class InventoryService {
     reservationRepository.saveAll(reservations);
   }
 
+  // Kafka order failed/cancelled event handler
   @Transactional
   public void rollbackStock(OrderEventData data) {
     List<InventoryReservation> reservations =
