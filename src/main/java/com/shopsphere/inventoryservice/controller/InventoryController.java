@@ -33,6 +33,13 @@ public class InventoryController {
     return ResponseEntity.ok(inventoryService.findByProductId(productId));
   }
 
+  @PostMapping("/availabilities")
+  public ResponseEntity<List<AvailabilityResponse>> getAllAvailabilities(
+    @RequestBody ProductIdsRequest request
+  ) {
+    return ResponseEntity.ok(inventoryService.getAvailabilities(request));
+  }
+
   @PostMapping("/availability")
   public ResponseEntity<AvailabilityResponse> getAvailability(
     @RequestBody AvailabilityRequest request

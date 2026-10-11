@@ -1,9 +1,8 @@
 package com.shopsphere.inventoryservice.service;
 
 import com.shopsphere.inventoryservice.dto.*;
-import com.shopsphere.inventoryservice.dto.order.*;
-import com.shopsphere.inventoryservice.entity.Inventory;
-import com.shopsphere.inventoryservice.entity.InventoryReservation;
+import com.shopsphere.inventoryservice.dto.order.OrderEventData;
+import com.shopsphere.inventoryservice.entity.*;
 import com.shopsphere.inventoryservice.enums.ReservationStatus;
 import com.shopsphere.inventoryservice.exceptions.InsufficientStockException;
 import com.shopsphere.inventoryservice.repository.InventoryRepository;
@@ -41,12 +40,27 @@ public class InventoryService {
       );
   }
 
+  public List<AvailabilityResponse> getAvailabilities(
+    ProductIdsRequest request
+  ) {
+    return inventoryRepository
+      .findAllByProductIdIn(request.getProductIds())
+      .stream()
+      .map(inv ->
+        toAvailabilityResponse(
+          inv.getProductId(),
+          (inv.getIsAvailable() && inv.getStock() > 0)
+        )
+      )
+      .toList();
+  }
+
   public AvailabilityResponse getAvailability(AvailabilityRequest request) {
-    Boolean available = inventoryRepository.checkAvailability(
+    Inventory inv = findByProductId(request.getProductId());
+    return toAvailabilityResponse(
       request.getProductId(),
-      request.getQuantity()
+      (inv.getIsAvailable() && inv.getStock() >= request.getQuantity())
     );
-    return toAvailabilityResponse(request.getProductId(), available);
   }
 
   public Inventory create(Inventory inventory) {
